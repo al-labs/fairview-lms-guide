@@ -341,20 +341,7 @@
   z-index: 9999;
   outline: 3px solid #0066cc !important;
   outline-offset: 2px !important;
-  animation: pulse 2s infinite;
   box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.3);
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(0, 102, 204, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(0, 102, 204, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(0, 102, 204, 0);
-  }
 }
 
 .callout-no-element {
