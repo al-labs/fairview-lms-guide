@@ -1,0 +1,12 @@
+[
+  {
+    "selector": ".course-title",
+    "text": "This is the course name field.",
+    "pageUrlPattern": "/learning/course/*"
+  },
+  {
+    "selector": "#startButton",
+    "text": "Click here to start the course.",
+    "pageUrlPattern": "/learning/course/start/*"
+  }
+]

@@ -1,5 +1,18 @@
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function urlMatchesPattern(pattern) {
+  if (!pattern) return true;
+  const regex = new RegExp('^' + escapeRegex(pattern).replace(/\\\*/g, '.*') + '$');
+  return regex.test(window.location.href);
+}
+
 function applyTooltips(data) {
   data.forEach(item => {
+    if (item.pageUrlPattern && !urlMatchesPattern(item.pageUrlPattern)) {
+      return;
+    }
     const elements = document.querySelectorAll(item.selector);
     elements.forEach(el => {
       const tip = document.createElement('span');
