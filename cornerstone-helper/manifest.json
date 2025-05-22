@@ -3,7 +3,7 @@
   "name": "Cornerstone Helper",
   "version": "0.1",
   "description": "Injects help tooltips into Cornerstone",
-  "permissions": ["storage", "activeTab", "scripting"],
+  "permissions": ["storage"],
   "background": {
     "service_worker": "background.js"
   },
