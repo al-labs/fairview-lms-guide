@@ -18,6 +18,15 @@ cornerstone-helper/
 
 The `cornerstone-helper` folder is what you load as an unpacked extension during development. The
 `help-data.json` file should reside directly inside this folder alongside `manifest.json`.
+Each entry in the file describes a tooltip with three properties:
+
+```
+{
+  "selector": "CSS selector for the element", 
+  "text": "Tooltip text", 
+  "pageUrlPattern": "/learning/course/*"  # URL pattern where the tip applies
+}
+```
 
 ## Editing `help-data.json` on SharePoint
 
