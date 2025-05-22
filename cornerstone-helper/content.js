@@ -19,6 +19,16 @@ function applyTooltips(data) {
       const tip = document.createElement('span');
       tip.className = 'helper-tooltip';
       tip.textContent = item.text;
+
+      if (item.bgColor) {
+        tip.style.setProperty('--helper-bg-color', item.bgColor);
+        tip.dataset.bgColor = item.bgColor;
+      }
+      if (item.textColor) {
+        tip.style.setProperty('--helper-text-color', item.textColor);
+        tip.dataset.textColor = item.textColor;
+      }
+
       el.style.position = 'relative';
       el.appendChild(tip);
 
