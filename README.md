@@ -5,39 +5,45 @@ This repository contains a Chrome extension that provides contextual guidance wh
 ## Directory structure
 
 ```
-/extension
-├── manifest.json      # Chrome extension manifest
-├── help-data.json     # Mapping of LMS pages to help text
-├── icons/             # Extension icons
-└── scripts/           # Content and background scripts
+cornerstone-helper/
+├── manifest.json  # Chrome extension manifest
+├── background.js  # Service worker script
+├── content.js     # Injected page script
+├── style.css      # Styles for inserted helpers
+├── popup/         # Browser action popup
+│   ├── popup.html
+│   └── popup.js
+└── help-data.json # Mapping of LMS pages to help text (copied from SharePoint)
 ```
 
-The `extension` folder is what you load as an unpacked extension during development.
+The `cornerstone-helper` folder is what you load as an unpacked extension during development. The
+`help-data.json` file should reside directly inside this folder alongside `manifest.json`.
 
 ## Editing `help-data.json` on SharePoint
 
 1. Sign in to the Fairview SharePoint site.
-2. Browse to **Shared Documents** and locate `help-data.json` under the extension folder.
+2. Browse to **Shared Documents** and locate `help-data.json` under the `cornerstone-helper` folder.
 3. Choose **Edit** to modify the file in the browser or download it and edit locally.
 4. Save your changes on SharePoint so the latest help content is available to everyone.
-5. Copy the updated file into the `extension` directory before building or deploying the extension.
+5. Copy the updated file into the `cornerstone-helper` directory before building or deploying the extension.
 
 ## Building/packing the extension
 
-After updating the files, pack the extension into a CRX package using Chrome:
+After updating the files, pack the extension into a CRX package using Chrome. Ensure
+`help-data.json` is present in the `cornerstone-helper` folder so it gets included:
 
 ```bash
-chrome.exe --pack-extension=extension --pack-extension-key=extension.pem
+chrome.exe --pack-extension=cornerstone-helper --pack-extension-key=extension.pem
 ```
 
-This command creates `extension.crx` and updates `extension.pem` with the private key.
+This command creates `cornerstone-helper.crx` and updates `extension.pem` with the private key.
 
 ## Computing the CRX hash
 
 Some deployment methods require the SHA‑256 hash of the CRX. Calculate it with `openssl`:
 
 ```bash
-openssl dgst -sha256 -binary extension.crx | openssl base64 -A
+openssl dgst -sha256 -binary cornerstone-helper.crx | openssl base64 -A
 ```
 
 Record the resulting value for use in policies or update manifests.
