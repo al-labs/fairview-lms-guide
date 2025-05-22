@@ -71,3 +71,15 @@ Record the resulting value for use in policies or update manifests.
 - Developer Mode enabled to load the unpacked extension during development.
 - The manifest must request permissions for the Cornerstone domain (e.g., `https://*.csod.com/*`) and any other browser APIs the scripts use.
 - You may need administrator rights if the extension is deployed via group policy.
+
+## Tooltip sidebar
+
+The extension can display a sidebar listing all tooltip texts available for the
+current page. Use the popup menu to toggle this sidebar on or off.
+
+1. Click the extension icon in the browser toolbar.
+2. Enable **Show Tips Sidebar**.
+3. Reload the Cornerstone page if necessary.
+
+When enabled, a panel appears on the right side of the page containing each tip
+that matches the current URL pattern from `help-data.json`.
