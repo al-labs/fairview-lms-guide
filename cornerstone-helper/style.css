@@ -10,4 +10,19 @@
   white-space: nowrap;
   font-size: 12px;
   z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.helper-tooltip.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.helper-icon {
+  margin-left: 4px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 12px;
 }
