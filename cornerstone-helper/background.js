@@ -5,9 +5,10 @@ async function loadHelperData() {
     const response = await fetch(DATA_URL);
     if (!response.ok) throw new Error('Network response was not ok');
     const data = await response.json();
-    await chrome.storage.local.set({ helperData: data });
+    await chrome.storage.local.set({ helperData: data, helperDataError: false });
   } catch (err) {
     console.error('Failed to load helper data', err);
+    await chrome.storage.local.set({ helperDataError: true });
   }
 }
 
@@ -16,3 +17,10 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 chrome.runtime.onStartup.addListener(loadHelperData);
+
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg === 'reloadHelperData') {
+    loadHelperData().then(() => sendResponse({ success: true })).catch(() => sendResponse({ success: false }));
+    return true; // keep the message channel open for async response
+  }
+});
