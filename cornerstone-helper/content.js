@@ -8,6 +8,22 @@ function urlMatchesPattern(pattern) {
   return regex.test(window.location.href);
 }
 
+let calloutSteps = [];
+let currentCalloutIndex = 0;
+let calloutsEnabled = true;
+
+function parseSteps(data) {
+  const parsed = [];
+  data.forEach((page) => {
+    if (page.pageUrlPattern && !urlMatchesPattern(page.pageUrlPattern)) {
+      return;
+    }
+    const steps = Array.isArray(page.steps) ? page.steps : [];
+    steps.forEach(step => parsed.push(step));
+  });
+  return parsed;
+}
+
 function applyTooltips(data) {
   data.forEach((page, pageIndex) => {
     if (page.pageUrlPattern && !urlMatchesPattern(page.pageUrlPattern)) {
@@ -69,6 +85,64 @@ function showTooltip(stepId) {
   }
 }
 
+function removeCallout() {
+  const overlay = document.querySelector('.helper-callout-overlay');
+  if (overlay) overlay.remove();
+}
+
+function showCallout(index) {
+  if (!calloutsEnabled) return;
+  const step = calloutSteps[index];
+  if (!step) return;
+  currentCalloutIndex = index;
+  removeCallout();
+
+  const overlay = document.createElement('div');
+  overlay.className = 'helper-callout-overlay';
+
+  const callout = document.createElement('div');
+  callout.className = 'helper-callout';
+  const content = document.createElement('div');
+  content.className = 'helper-callout-content';
+  content.innerHTML = step.callout || step.text || '';
+  callout.appendChild(content);
+
+  const nav = document.createElement('div');
+  nav.className = 'helper-callout-nav';
+  const prev = document.createElement('button');
+  prev.className = 'helper-callout-prev';
+  prev.textContent = 'Prev';
+  prev.disabled = index === 0;
+  prev.addEventListener('click', prevCallout);
+  const next = document.createElement('button');
+  next.className = 'helper-callout-next';
+  next.textContent = 'Next';
+  next.disabled = index >= calloutSteps.length - 1;
+  next.addEventListener('click', nextCallout);
+  nav.appendChild(prev);
+  nav.appendChild(next);
+  callout.appendChild(nav);
+
+  overlay.appendChild(callout);
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.remove();
+  });
+
+  document.body.appendChild(overlay);
+}
+
+function nextCallout() {
+  if (currentCalloutIndex < calloutSteps.length - 1) {
+    showCallout(currentCalloutIndex + 1);
+  }
+}
+
+function prevCallout() {
+  if (currentCalloutIndex > 0) {
+    showCallout(currentCalloutIndex - 1);
+  }
+}
+
 function createSidebar() {
   if (document.getElementById('helper-sidebar')) return;
   const sidebar = document.createElement('div');
@@ -103,6 +177,7 @@ function updateSidebar(data, enabled) {
   if (!enabled) return;
   createSidebar();
   const sidebar = document.getElementById('helper-sidebar');
+  let idx = 0;
 
   data.forEach((page, pageIndex) => {
     if (page.pageUrlPattern && !urlMatchesPattern(page.pageUrlPattern)) {
@@ -122,8 +197,10 @@ function updateSidebar(data, enabled) {
       const li = document.createElement('li');
       li.textContent = item.text;
       li.dataset.stepId = stepId;
+      const calloutIndex = idx++;
+      li.dataset.calloutIndex = calloutIndex;
       li.addEventListener('click', () => {
-        showTooltip(stepId);
+        showCallout(calloutIndex);
       });
       list.appendChild(li);
     });
@@ -140,10 +217,14 @@ function updateSidebar(data, enabled) {
 function updateHelpers() {
   chrome.storage.local.get(['helperEnabled', 'helperData', 'sidebarEnabled', 'calloutsEnabled'], result => {
     removeTooltips();
-    const showCallouts = result.calloutsEnabled !== false;
-    if (result.helperEnabled && showCallouts && Array.isArray(result.helperData)) {
+    calloutsEnabled = result.calloutsEnabled !== false;
+    if (!calloutsEnabled) {
+      removeCallout();
+    }
+    if (result.helperEnabled && Array.isArray(result.helperData)) {
       applyTooltips(result.helperData);
     }
+    calloutSteps = Array.isArray(result.helperData) ? parseSteps(result.helperData) : [];
     updateSidebar(result.helperData || [], result.sidebarEnabled);
   });
 }
