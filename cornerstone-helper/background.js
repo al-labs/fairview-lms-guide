@@ -1,4 +1,4 @@
-const DATA_URL = 'https://sharepoint.example.com/helper-data.json';
+const DATA_URL = 'https://mnfhs.sharepoint.com/sites/LMSTeam/LMS%20Public/CornerstoneTraining/helper-data.json';
 
 async function loadHelperData() {
   try {
