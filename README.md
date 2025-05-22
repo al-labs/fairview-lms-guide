@@ -2,6 +2,8 @@
 
 This repository contains a Chrome extension that provides contextual guidance while navigating the Fairview Learning Management System (Cornerstone). The extension injects help tips into the LMS based on rules defined in `help-data.json`.
 
+At runtime `cornerstone-helper/background.js` fetches `helper-data.json` from the Fairview SharePoint site and stores the result in `chrome.storage.local`. The content script then reads this stored data to display tooltips. If the network request fails (for example when offline), the extension falls back to any `help-data.json` bundled with the extension.
+
 ## Directory structure
 
 ```
@@ -13,11 +15,11 @@ cornerstone-helper/
 ├── popup/         # Browser action popup
 │   ├── popup.html
 │   └── popup.js
-└── help-data.json # Mapping of LMS pages to help text (copied from SharePoint)
+└── help-data.json # Local fallback copy of the help mappings
 ```
 
-The `cornerstone-helper` folder is what you load as an unpacked extension during development. The
-`help-data.json` file should reside directly inside this folder alongside `manifest.json`.
+The `cornerstone-helper` folder is what you load as an unpacked extension during development.
+Optionally include a `help-data.json` file here so the extension has a fallback when SharePoint isn't reachable.
 Each entry in the file describes a tooltip with three properties:
 
 ```
@@ -27,6 +29,7 @@ Each entry in the file describes a tooltip with three properties:
   "pageUrlPattern": "/learning/course/*"  # URL pattern where the tip applies
 }
 ```
+
 
 ## Editing `help-data.json` on SharePoint
 
@@ -38,8 +41,7 @@ Each entry in the file describes a tooltip with three properties:
 
 ## Building/packing the extension
 
-After updating the files, pack the extension into a CRX package using Chrome. Ensure
-`help-data.json` is present in the `cornerstone-helper` folder so it gets included:
+After updating the files, pack the extension into a CRX package using Chrome. If you want offline operation, place a `help-data.json` file in the `cornerstone-helper` folder so it gets included:
 
 ```bash
 chrome.exe --pack-extension=cornerstone-helper --pack-extension-key=extension.pem
