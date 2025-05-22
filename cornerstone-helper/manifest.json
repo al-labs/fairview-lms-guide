@@ -15,7 +15,7 @@
     }
   ],
   "host_permissions": [
-    "https://sharepoint.example.com/*"
+    "https://mnfhs.sharepoint.com/sites/LMSTeam/*"
   ],
   "action": {
     "default_popup": "popup/popup.html"
