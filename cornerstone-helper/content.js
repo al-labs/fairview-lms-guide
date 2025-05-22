@@ -14,6 +14,7 @@ function applyTooltips(data) {
       return;
     }
     const elements = document.querySelectorAll(item.selector);
+    const trigger = item.trigger || 'hover';
     elements.forEach(el => {
       const tip = document.createElement('span');
       tip.className = 'helper-tooltip';
@@ -30,6 +31,23 @@ function applyTooltips(data) {
 
       el.style.position = 'relative';
       el.appendChild(tip);
+
+      if (trigger === 'click') {
+        const icon = document.createElement('span');
+        icon.className = 'helper-icon';
+        icon.textContent = '❓';
+        el.appendChild(icon);
+        icon.addEventListener('click', () => {
+          tip.classList.toggle('visible');
+        });
+      } else {
+        el.addEventListener('mouseenter', () => {
+          tip.classList.add('visible');
+        });
+        el.addEventListener('mouseleave', () => {
+          tip.classList.remove('visible');
+        });
+      }
     });
   });
 }

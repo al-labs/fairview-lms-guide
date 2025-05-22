@@ -5,10 +5,12 @@
     "pageUrlPattern": "/learning/course/*",
     "bgColor": "#0055ff",
     "textColor": "#ffffff"
+
   },
   {
     "selector": "#startButton",
     "text": "Click here to start the course.",
-    "pageUrlPattern": "/learning/course/start/*"
+    "pageUrlPattern": "/learning/course/start/*",
+    "trigger": "click"
   }
 ]
