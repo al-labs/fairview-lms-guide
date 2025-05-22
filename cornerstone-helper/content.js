@@ -85,9 +85,10 @@ function updateSidebar(data, enabled) {
 }
 
 function updateHelpers() {
-  chrome.storage.local.get(['helperEnabled', 'helperData', 'sidebarEnabled'], result => {
+  chrome.storage.local.get(['helperEnabled', 'helperData', 'sidebarEnabled', 'calloutsEnabled'], result => {
     removeTooltips();
-    if (result.helperEnabled && Array.isArray(result.helperData)) {
+    const showCallouts = result.calloutsEnabled !== false;
+    if (result.helperEnabled && showCallouts && Array.isArray(result.helperData)) {
       applyTooltips(result.helperData);
     }
     updateSidebar(result.helperData || [], result.sidebarEnabled);
@@ -97,7 +98,7 @@ function updateHelpers() {
 function init() {
   updateHelpers();
   chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === 'local' && (changes.helperEnabled || changes.helperData || changes.sidebarEnabled)) {
+    if (area === 'local' && (changes.helperEnabled || changes.helperData || changes.sidebarEnabled || changes.calloutsEnabled)) {
       updateHelpers();
     }
   });
