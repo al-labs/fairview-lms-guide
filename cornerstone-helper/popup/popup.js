@@ -1,9 +1,11 @@
 const toggle = document.getElementById('toggle');
+const sidebarToggle = document.getElementById('sidebarToggle');
 const errorMsg = document.getElementById('error');
 const retryBtn = document.getElementById('retry');
 
-chrome.storage.local.get(['helperEnabled', 'helperDataError'], data => {
+chrome.storage.local.get(['helperEnabled', 'helperDataError', 'sidebarEnabled'], data => {
   toggle.checked = Boolean(data.helperEnabled);
+  sidebarToggle.checked = Boolean(data.sidebarEnabled);
   if (data.helperDataError) {
     errorMsg.style.display = 'block';
     retryBtn.style.display = 'inline-block';
@@ -12,6 +14,10 @@ chrome.storage.local.get(['helperEnabled', 'helperDataError'], data => {
 
 toggle.addEventListener('change', () => {
   chrome.storage.local.set({ helperEnabled: toggle.checked });
+});
+
+sidebarToggle.addEventListener('change', () => {
+  chrome.storage.local.set({ sidebarEnabled: sidebarToggle.checked });
 });
 
 retryBtn.addEventListener('click', () => {
