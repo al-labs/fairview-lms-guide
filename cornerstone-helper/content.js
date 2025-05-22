@@ -11,10 +11,25 @@ function applyTooltips(data) {
   });
 }
 
-function init() {
+function removeTooltips() {
+  document.querySelectorAll('.helper-tooltip').forEach(tip => tip.remove());
+}
+
+function updateTooltips() {
   chrome.storage.local.get(['helperEnabled', 'helperData'], result => {
-    if (!result.helperEnabled || !Array.isArray(result.helperData)) return;
-    applyTooltips(result.helperData);
+    removeTooltips();
+    if (result.helperEnabled && Array.isArray(result.helperData)) {
+      applyTooltips(result.helperData);
+    }
+  });
+}
+
+function init() {
+  updateTooltips();
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === 'local' && (changes.helperEnabled || changes.helperData)) {
+      updateTooltips();
+    }
   });
 }
 
