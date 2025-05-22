@@ -1,16 +1,24 @@
 [
   {
-    "selector": ".course-title",
-    "text": "This is the course name field.",
     "pageUrlPattern": "/learning/course/*",
-    "bgColor": "#0055ff",
-    "textColor": "#ffffff"
-
+    "info": "See the course overview help article.",
+    "steps": [
+      {
+        "selector": ".course-title",
+        "text": "This is the course name field.",
+        "bgColor": "#0055ff",
+        "textColor": "#ffffff"
+      }
+    ]
   },
   {
-    "selector": "#startButton",
-    "text": "Click here to start the course.",
     "pageUrlPattern": "/learning/course/start/*",
-    "trigger": "click"
+    "steps": [
+      {
+        "selector": "#startButton",
+        "text": "Click here to start the course.",
+        "trigger": "click"
+      }
+    ]
   }
 ]
