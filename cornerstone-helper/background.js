@@ -13,7 +13,7 @@ async function loadHelperData() {
 }
 
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.local.set({ helperEnabled: true, sidebarEnabled: false }, loadHelperData);
+  chrome.storage.local.set({ helperEnabled: true, sidebarEnabled: false, calloutsEnabled: true }, loadHelperData);
 });
 
 chrome.runtime.onStartup.addListener(loadHelperData);

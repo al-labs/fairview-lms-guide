@@ -56,6 +56,55 @@ function removeTooltips() {
   document.querySelectorAll('.helper-tooltip').forEach(tip => tip.remove());
 }
 
+let callouts = [];
+let stepData = [];
+let currentCalloutIndex = 0;
+
+function removeCallouts() {
+  callouts.forEach(c => c.remove());
+  callouts = [];
+  stepData = [];
+  currentCalloutIndex = 0;
+}
+
+function applyCallouts(steps) {
+  removeCallouts();
+  steps.forEach(step => {
+    if (step.pageUrlPattern && !urlMatchesPattern(step.pageUrlPattern)) return;
+    const el = document.querySelector(step.selector);
+    if (!el) return;
+    const callout = document.createElement('div');
+    callout.className = 'helper-callout';
+    callout.textContent = step.text;
+    el.style.position = 'relative';
+    el.appendChild(callout);
+    callouts.push(callout);
+    stepData.push(step);
+  });
+  if (callouts.length) {
+    showCallout(0);
+  }
+}
+
+function showCallout(index) {
+  if (index < 0 || index >= callouts.length) return;
+  callouts.forEach(c => c.classList.remove('visible'));
+  callouts[index].classList.add('visible');
+  currentCalloutIndex = index;
+}
+
+function nextCallout() {
+  if (currentCalloutIndex < callouts.length - 1) {
+    showCallout(currentCalloutIndex + 1);
+  }
+}
+
+function prevCallout() {
+  if (currentCalloutIndex > 0) {
+    showCallout(currentCalloutIndex - 1);
+  }
+}
+
 function createSidebar() {
   if (document.getElementById('helper-sidebar')) return;
   const sidebar = document.createElement('div');
@@ -68,36 +117,46 @@ function removeSidebar() {
   if (sb) sb.remove();
 }
 
-function updateSidebar(data, enabled) {
+function updateSidebar(enabled) {
   removeSidebar();
   if (!enabled) return;
   createSidebar();
   const sidebar = document.getElementById('helper-sidebar');
-  data.forEach(item => {
-    if (item.pageUrlPattern && !urlMatchesPattern(item.pageUrlPattern)) {
-      return;
-    }
+  stepData.forEach((step, idx) => {
     const entry = document.createElement('div');
     entry.className = 'helper-sidebar-entry';
-    entry.textContent = item.text;
+    entry.textContent = step.text;
+    entry.addEventListener('click', () => showCallout(idx));
     sidebar.appendChild(entry);
   });
 }
 
 function updateHelpers() {
-  chrome.storage.local.get(['helperEnabled', 'helperData', 'sidebarEnabled'], result => {
+  chrome.storage.local.get(['helperEnabled', 'helperData', 'sidebarEnabled', 'calloutsEnabled'], result => {
     removeTooltips();
-    if (result.helperEnabled && Array.isArray(result.helperData)) {
-      applyTooltips(result.helperData);
+    removeCallouts();
+
+    const data = result.helperData || {};
+    const tips = Array.isArray(data.tips) ? data.tips : (Array.isArray(data) ? data : []);
+    const steps = Array.isArray(data.steps) ? data.steps : [];
+
+    if (result.helperEnabled) {
+      if (tips.length) {
+        applyTooltips(tips);
+      }
+      if (result.calloutsEnabled && steps.length) {
+        applyCallouts(steps);
+      }
     }
-    updateSidebar(result.helperData || [], result.sidebarEnabled);
+
+    updateSidebar(result.sidebarEnabled);
   });
 }
 
 function init() {
   updateHelpers();
   chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === 'local' && (changes.helperEnabled || changes.helperData || changes.sidebarEnabled)) {
+    if (area === 'local' && (changes.helperEnabled || changes.helperData || changes.sidebarEnabled || changes.calloutsEnabled)) {
       updateHelpers();
     }
   });
