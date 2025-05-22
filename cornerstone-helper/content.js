@@ -9,45 +9,48 @@ function urlMatchesPattern(pattern) {
 }
 
 function applyTooltips(data) {
-  data.forEach(item => {
-    if (item.pageUrlPattern && !urlMatchesPattern(item.pageUrlPattern)) {
+  data.forEach(page => {
+    if (page.pageUrlPattern && !urlMatchesPattern(page.pageUrlPattern)) {
       return;
     }
-    const elements = document.querySelectorAll(item.selector);
-    const trigger = item.trigger || 'hover';
-    elements.forEach(el => {
-      const tip = document.createElement('span');
-      tip.className = 'helper-tooltip';
-      tip.textContent = item.text;
+    const steps = Array.isArray(page.steps) ? page.steps : [];
+    steps.forEach(item => {
+      const elements = document.querySelectorAll(item.selector);
+      const trigger = item.trigger || 'hover';
+      elements.forEach(el => {
+        const tip = document.createElement('span');
+        tip.className = 'helper-tooltip';
+        tip.textContent = item.text;
 
-      if (item.bgColor) {
-        tip.style.setProperty('--helper-bg-color', item.bgColor);
-        tip.dataset.bgColor = item.bgColor;
-      }
-      if (item.textColor) {
-        tip.style.setProperty('--helper-text-color', item.textColor);
-        tip.dataset.textColor = item.textColor;
-      }
+        if (item.bgColor) {
+          tip.style.setProperty('--helper-bg-color', item.bgColor);
+          tip.dataset.bgColor = item.bgColor;
+        }
+        if (item.textColor) {
+          tip.style.setProperty('--helper-text-color', item.textColor);
+          tip.dataset.textColor = item.textColor;
+        }
 
-      el.style.position = 'relative';
-      el.appendChild(tip);
+        el.style.position = 'relative';
+        el.appendChild(tip);
 
-      if (trigger === 'click') {
-        const icon = document.createElement('span');
-        icon.className = 'helper-icon';
-        icon.textContent = '❓';
-        el.appendChild(icon);
-        icon.addEventListener('click', () => {
-          tip.classList.toggle('visible');
-        });
-      } else {
-        el.addEventListener('mouseenter', () => {
-          tip.classList.add('visible');
-        });
-        el.addEventListener('mouseleave', () => {
-          tip.classList.remove('visible');
-        });
-      }
+        if (trigger === 'click') {
+          const icon = document.createElement('span');
+          icon.className = 'helper-icon';
+          icon.textContent = '❓';
+          el.appendChild(icon);
+          icon.addEventListener('click', () => {
+            tip.classList.toggle('visible');
+          });
+        } else {
+          el.addEventListener('mouseenter', () => {
+            tip.classList.add('visible');
+          });
+          el.addEventListener('mouseleave', () => {
+            tip.classList.remove('visible');
+          });
+        }
+      });
     });
   });
 }
@@ -73,14 +76,23 @@ function updateSidebar(data, enabled) {
   if (!enabled) return;
   createSidebar();
   const sidebar = document.getElementById('helper-sidebar');
-  data.forEach(item => {
-    if (item.pageUrlPattern && !urlMatchesPattern(item.pageUrlPattern)) {
+  data.forEach(page => {
+    if (page.pageUrlPattern && !urlMatchesPattern(page.pageUrlPattern)) {
       return;
     }
-    const entry = document.createElement('div');
-    entry.className = 'helper-sidebar-entry';
-    entry.textContent = item.text;
-    sidebar.appendChild(entry);
+    if (page.info) {
+      const info = document.createElement('div');
+      info.className = 'helper-sidebar-entry';
+      info.textContent = page.info;
+      sidebar.appendChild(info);
+    }
+    const steps = Array.isArray(page.steps) ? page.steps : [];
+    steps.forEach(item => {
+      const entry = document.createElement('div');
+      entry.className = 'helper-sidebar-entry';
+      entry.textContent = item.text;
+      sidebar.appendChild(entry);
+    });
   });
 }
 

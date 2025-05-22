@@ -20,21 +20,31 @@ cornerstone-helper/
 
 The `cornerstone-helper` folder is what you load as an unpacked extension during development.
 Optionally include a `help-data.json` file here so the extension has a fallback when SharePoint isn't reachable.
-Each entry in the file describes a tooltip with these properties:
+Each entry in the file describes a page and its associated tooltips:
 
 ```
 {
-  "selector": "CSS selector for the element",
-  "text": "Tooltip text",
-  "pageUrlPattern": "/learning/course/*",  # URL pattern where the tip applies
-  "bgColor": "#0055ff",                 # optional background color
-  "textColor": "#ffffff"                # optional text color
+  "pageUrlPattern": "/learning/course/*",             # URL pattern for the page
+  "info": "Optional notes or links",                  # optional
+  "steps": [
+    {
+      "selector": "CSS selector for the element",
+      "text": "Tooltip text",
+      "bgColor": "#0055ff",                 # optional background color
+      "textColor": "#ffffff"                # optional text color
+    },
+    {
+      "selector": "#startButton",
+      "text": "Click here to start the course.",
+      "trigger": "click"                      # optional trigger type
+    }
+  ]
 }
 ```
 
-`bgColor` and `textColor` are optional. They control the tooltip's background
-and text colors and can be overridden using CSS variables or data attributes on
-the generated `.helper-tooltip` element.
+`bgColor` and `textColor` are optional on each step. They control the tooltip's
+background and text colors and can be overridden using CSS variables or data
+attributes on the generated `.helper-tooltip` element.
 
 
 ## Editing `help-data.json` on SharePoint
